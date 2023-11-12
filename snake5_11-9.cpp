@@ -9,6 +9,7 @@ char a[50][50];//小心数组越界
 int tx[100];//每个蛇尾都有一个坐标（txi,tyi），对应蛇头（x，y）
 int ty[100];
 int tail=0;
+int mo;//障碍物是否移动
 bool End;//判断游戏终止，撞墙或头尾相碰
 int x,y,score=0;//
 int f1x,f1y,f2x,f2y;//食物
@@ -181,15 +182,30 @@ void logic()
         if(x>=width||x<=1||y>=height||y<=1) End=true;//撞墙游戏结束
     }
 
+    if(mo==2)//对于困难模式，障碍物会移动
+    {
+        for(int i=1;i<=obstacle;i++)
+        {
+            if(ox[i]>width) ox[i]=1;
+            if(ox[i]<1) ox[i]=width;//障碍物撞墙也会从另一边出来
+            if(oy[i]>height) oy[i]=1;
+            if(oy[i]<1) oy[i]=height;
+        }
+
+        ox[1]+=3;//障碍物1移动快
+        oy[1]+=2;
+        ox[2]--;//障碍物2移动慢
+        oy[2]--;
+    }
 }
 
 int main()//end为false就持续打印
 {
-    srand(time(0));// srand(static_cast<unsigned>(time(0)));//实现真正的随机数处理
 
     bool restart=true;
     while(restart)//这样可以反复进行游戏过程
     {
+        srand(time(0));// srand(static_cast<unsigned>(time(0)));//实现真正的随机数处理
         cout<<"\n\n\n\n\n\t\t\t 欢迎进入贪吃蛇游戏!"<<endl;//欢迎界面;
         cout<<"\n\n\n\t\t\t 按任意键马上开始。。。"<<endl;//准备开始;;
         _getch();
@@ -244,6 +260,11 @@ int main()//end为false就持续打印
             break;
         }
         system("cls");//clean the screen清屏操作  
+
+        cout<<"\n\n\n\n\n\t\t\t 请选择游戏难度"<<endl;//\n与endl效果相同 
+        cout<<"\n\n\n\n\n\t\t\t 1：简单25*25"<<endl;//\t相当于tab缩进，我们以此达到交互页面居中的效果
+        cout<<"\n\n\n\n\n\t\t\t 2：困难30*35"<<endl;
+        cin>>mo;
 
         setup();
         while(End==false)
